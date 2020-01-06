@@ -1,9 +1,10 @@
 # port_scanner
-This is a simple port scanner it wrote for understanding how Go routines work
+This is a simple port scanner I wrote for understanding how Go routines work
 
 it is fully functioning so feel free to use it
 
-it take either 2 or 3 arginemts
+it takes either 2 or 3 arginemts
+
 
 ## 2 Arguments
 1: Host
@@ -18,7 +19,8 @@ Opened localhost:22
 
 ## 3 Arguments
 1: Host
-2: port
+2: Starting port
+3: Ending port
 ``` 
 ./portscanner localhost 10 10000
 ``` 

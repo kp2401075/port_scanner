@@ -29,7 +29,7 @@ func main() {
 			"1: host, 2: starting port & 3: ending port\n")
 	}
 	// waiting for go routine to finish
-	time.Sleep(time.Second * 5)
+	defer time.Sleep(time.Second * 5)
 }
 
 // rawConnectSignal take host name and port combined as a string and see if it it able to conenct to it
