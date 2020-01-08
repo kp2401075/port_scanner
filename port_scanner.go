@@ -29,7 +29,7 @@ func main() {
 			"1: host, 2: starting port & 3: ending port\n")
 	}
 	// waiting for go routine to finish
-	defer time.Sleep(time.Second * 5)
+	defer time.Sleep(time.Second)
 }
 
 // rawConnectSignal take host name and port combined as a string and see if it it able to conenct to it
@@ -37,8 +37,17 @@ func rawConnectSingle(host string) {
 	//fmt.Println("Function not implemeted")
 	//	fmt.Println("tcp", host, time.Second)
 	conn, err := net.DialTimeout("tcp", host, time.Second)
+
 	if err != nil {
-		//	fmt.Println("Connecting error:", err)
+		// This block can check if connection is refused or timedout
+		// which could either mean packets are getting to destination and being refuesed
+		// or packets are being dropped by a firewall somewhere
+		// if err.(net.Error).Timeout() {
+		// 	fmt.Println("n")
+
+		// }
+		// // not printing when it timesout
+		// fmt.Println("Connecting error:", err)
 	}
 	if conn != nil {
 		defer conn.Close()
