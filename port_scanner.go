@@ -5,11 +5,16 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 )
 
 func main() {
 	argsWithoutProg := os.Args[1:]
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
 	// host being assigned from command line agument
 	host := argsWithoutProg[0]
 	if len(argsWithoutProg) == 3 {
@@ -17,9 +22,11 @@ func main() {
 		max, _ := strconv.Atoi(argsWithoutProg[2])
 		// minimum port number being passed from the command line arguments
 		min, _ := strconv.Atoi(argsWithoutProg[1])
-		for i := min - 1; i <= max; i++ {
-			go rawConnectSingle(host + ":" + strconv.Itoa(i))
-		}
+		go func() {
+			rawConnectMulti(host, min, max)
+
+			wg.Done()
+		}()
 	} else if len(argsWithoutProg) == 2 {
 		rawConnectSingle(host + ":" + argsWithoutProg[1])
 	} else {
@@ -28,27 +35,23 @@ func main() {
 			"3 Aguments will make it check for the range of ports \n",
 			"1: host, 2: starting port & 3: ending port\n")
 	}
-	// waiting for go routine to finish
-	defer time.Sleep(time.Second)
+	// wait before completion of scaning
+	wg.Wait()
+}
+
+func rawConnectMulti(host string, start int, stop int) {
+	for i := start - 1; i <= stop; i++ {
+		rawConnectSingle(host + ":" + strconv.Itoa(i))
+	}
+
 }
 
 // rawConnectSignal take host name and port combined as a string and see if it it able to conenct to it
 func rawConnectSingle(host string) {
-	//fmt.Println("Function not implemeted")
-	//	fmt.Println("tcp", host, time.Second)
-	conn, err := net.DialTimeout("tcp", host, time.Second)
 
-	if err != nil {
-		// This block can check if connection is refused or timedout
-		// which could either mean packets are getting to destination and being refuesed
-		// or packets are being dropped by a firewall somewhere
-		// if err.(net.Error).Timeout() {
-		// 	fmt.Println("n")
+	conn, _ := net.DialTimeout("tcp", host, time.Second)
+	//conn, err := net.Dial("tcp", host)
 
-		// }
-		// // not printing when it timesout
-		// fmt.Println("Connecting error:", err)
-	}
 	if conn != nil {
 		defer conn.Close()
 		fmt.Println("Opened", host)
