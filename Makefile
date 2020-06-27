@@ -1,12 +1,9 @@
 .POSIX:
 .SUFFIXES:
 
-
 GO?=go
 GOFLAGS?=
-
 GOSRC!=find . -name '*.go'
-
 
 portscanner: $(GOSRC)
 	$(GO) build $(GOFLAGS) \
